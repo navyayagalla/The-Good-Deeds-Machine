@@ -1,0 +1,328 @@
+ #include <LiquidCrystal.h>
+ #include "Adafruit_Thermal.h"
+ #include "adalogo.h".                   //should be good deeds logo but must be connected to main file in the same source file
+ #include "SoftwareSerial.h"
+// === CONSTANTS AND GLOBALS ===
+// -- PINS --
+
+const int PIN_BUTTON1 = 8;  // digital
+const int PIN_BUTTON2 = 9;  // digital
+#define TX_PIN 7 // Arduino transmit  YELLOW WIRE  labeled RX on printer
+#define RX_PIN 6 // Arduino receive   GREEN WIRE   labeled TX on printer
+
+SoftwareSerial mySerial(RX_PIN, TX_PIN); // Declare SoftwareSerial obj first
+Adafruit_Thermal printer(&mySerial);     // Pass addr to printer constructor
+int run = 0;
+int b1 = 0;
+int b2 = 0;
+// -- LCD --
+// PIN 12   -> RS
+// PIN 11   -> Enable
+// PINS 2-5 -> D4-7
+LiquidCrystal lcd(12, 11, 2, 3, 4, 5);
+// number of columns in the LCD
+const int LCD_COLS = 16;
+
+// start position for text
+int lcd_start = 0;
+
+
+// === INITIALIZATION ===
+void setup()
+{
+  // -- SET DIGITAL PINS --
+  pinMode(PIN_BUTTON1, INPUT);
+  pinMode(PIN_BUTTON2, INPUT);
+  lcd.begin(16,2);
+pinMode(7, OUTPUT); digitalWrite(7, LOW);
+  
+}
+void buttonState() {
+   delay(100);
+   b1 = digitalRead(8);
+   b2 = digitalRead(9);
+}
+void question() {
+      lcd.clear();
+      lcd.setCursor(3,1);
+      lcd.setCursor(0,0);
+      delay(500);
+      buttonState();
+}
+   
+void loop() {
+  buttonState();
+  if(run == 0) {             // Where are we?
+    run = 1;
+    lcd.setCursor(0,0);
+    lcd.print("Good Deeds");            // Print Starting
+    lcd.setCursor(0,2);
+    lcd.print("Press L to Start");
+    delay(500);
+  }
+  if(b1 == 1) {                // If a is pressed, begin and print first question "Extrovert or Introvert"
+      if(run == 1) {
+        question();
+        lcd.print("Extrovert(L) or");
+        lcd.setCursor(0,1);
+        lcd.print("Introvert(R)?");
+        run = 2;
+      }
+   }
+   if(b1 == 1) {
+        if(run == 2) { // If a is pressed again, continue and print question "Near People" (Extrovert)
+          lcd.clear();
+          question();
+        lcd.print("Near people(L)?");
+        lcd.setCursor(0,1);
+        lcd.print("Or no? (R)");
+        run = 3;
+        }
+    } 
+    if(b1 == 1) {
+      if(run == 3) { // if a is pressed again, continue and print question "Have Some Time" (Extrovert 1)
+        lcd.clear();
+        question();
+        lcd.print("Have some time ");
+        lcd.setCursor(0,1);
+        lcd.print("(L)? Or no(R)?");
+        run = 4;
+      }
+    }
+    if(b2 == 1) {
+        if(run == 3) { // if b is pressed, continue and print question "Have Some Time" (Extrovert 2)
+          lcd.clear();
+          question();
+          lcd.print("Have some time");
+          lcd.setCursor(0,1);
+          lcd.print("(L)? or no(R)?");
+          run = 5;
+        }
+    }
+    if(b1 == 1) {
+      if(run == 4) { // if a is pressed, continue and print answer "Conversation with a Stranger" (Extrovert 1a)
+        lcd.clear();
+        question();
+        lcd.print("Thanks! Take");
+        lcd.setCursor(0,1);
+        lcd.print("your slip below.");
+        mySerial.begin(19200);  // Initialize SoftwareSerial
+  printer.begin(); 
+        printer.justify('C');
+            printer.printBitmap(adalogo_width, adalogo_height, adalogo_data);
+            printer.feed(2);
+            printer.justify('C');
+            printer.setSize('M');
+            printer.println(F("Your Good Deed"));
+            printer.println(F("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"));
+            printer.println(F("Strike up a conversation"));
+            printer.println(F("with a stranger around"));
+            printer.println(F("you!"));
+            printer.println(F("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"));
+            printer.feed(10);
+            
+      }
+    }
+    if(b2 == 1) {
+      if(run == 4) { // if b is pressed, continue and print answer "Compliment a Stranger" (Extrovert 1b)
+        lcd.clear();
+        question();
+        lcd.print("Thanks! Take");
+        lcd.setCursor(0,1);
+        lcd.print("your slip below.");
+        mySerial.begin(19200);  // Initialize SoftwareSerial
+  printer.begin(); 
+        printer.justify('C');
+            printer.printBitmap(adalogo_width, adalogo_height, adalogo_data);
+            printer.feed(2);
+            printer.justify('C');
+            printer.setSize('M');
+            printer.println(F("Your Good Deed"));
+            printer.println(F("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"));
+            printer.println(F("Compliment a stranger"));
+            printer.println(F("around you!"));
+            printer.println(F("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"));
+            printer.feed(10);
+            
+            
+      }
+    }
+     if(b1 == 1) {
+      if(run == 5) { // if a is pressed, continue and print answer "Call Someone You Haven't Spoken to in a While" (Extrovert 2a)
+        lcd.clear();
+        question();
+        lcd.print("Thanks! Take");
+        lcd.setCursor(0,1);
+        lcd.print("your slip below.");
+        mySerial.begin(19200);  // Initialize SoftwareSerial
+  printer.begin(); 
+        printer.justify('C');
+            printer.printBitmap(adalogo_width, adalogo_height, adalogo_data);
+            printer.feed(2);
+            printer.justify('C');
+            printer.setSize('M');
+            printer.println(F("Your Good Deed"));
+            printer.println(F("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"));
+            printer.println(F("Call someone you"));
+            printer.println(F("haven't spoken to"));
+            printer.println(F("in a while!"));
+            printer.println(F("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"));
+            printer.feed(10);
+            
+      }
+    }
+    if(b2 == 1) {
+      if(run == 5) { // if a is pressed, continue and print answer "Write Down Three Things You Are Grateful For" (Extrovert 2b)
+        lcd.clear();
+        question();
+        lcd.print("Thanks! Take");
+        lcd.setCursor(0,1);
+        lcd.print("your slip below.");
+        mySerial.begin(19200);  // Initialize SoftwareSerial
+  printer.begin(); 
+        printer.justify('C');
+            printer.printBitmap(adalogo_width, adalogo_height, adalogo_data);
+            printer.feed(2);
+            printer.justify('C');
+            printer.setSize('M');
+            printer.println(F("Your Good Deed"));
+            printer.println(F("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"));
+            printer.println(F("Write down three"));
+            printer.println(F("things you are "));
+            printer.println(F("grateful for!"));
+            printer.println(F("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"));
+            printer.feed(10);
+            
+      }
+    }
+    if(b2 == 1) {        // if b is pressed, continue and print question "Pro Climate" (Introvert)
+         if(run == 2) { 
+          lcd.clear();
+          question();
+        lcd.print("Pro Climate? (L) ");
+        lcd.setCursor(0,1);
+        lcd.print("Or no? (R)");
+          run = 6;
+        }
+    } 
+    if(b1 == 1) {          // if a is pressed, continue and print question "Own a Reusable Bag?" (Introvert 1)
+      if(run == 6)    {
+        lcd.clear();
+        question();
+        lcd.print("Own a reusable");
+        lcd.setCursor(0,1);
+        lcd.print("bag?(L) or no(R)");
+        run = 8;
+      }
+    }
+     if(b1 == 1) {
+      if(run == 8) { // if a is pressed, continue and print answer "Use a Reusable Bag Instead of Plastic" (Introvert 1a)
+        lcd.clear();
+        question();
+        lcd.print("Thanks! Take");
+        lcd.setCursor(0,1);
+        lcd.print("your slip below.");
+        mySerial.begin(19200);  // Initialize SoftwareSerial
+  printer.begin(); 
+        printer.justify('C');
+            printer.printBitmap(adalogo_width, adalogo_height, adalogo_data);
+            printer.feed(2);
+            printer.justify('C');
+            printer.setSize('M');
+            printer.println(F("Your Good Deed"));
+            printer.println(F("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"));
+            printer.println(F("Use a resuable bag"));
+            printer.println(F("instead of plastic"));
+            printer.println(F("today!"));
+            printer.println(F("Love your mother"));
+            printer.println(F("There is no Planet B"));
+            printer.println(F("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"));
+            printer.feed(10);
+            
+      }
+    }
+     if(b2 == 1) {
+      if(run == 8) { // if a is pressed, continue and print answer "Pick Up a Piece of Trash Up From the Ground Today" (Introvert 1b)
+        lcd.clear();
+        question();
+        lcd.print("Thanks! Take");
+        lcd.setCursor(0,1);
+        lcd.print("your slip below.");
+        mySerial.begin(19200);  // Initialize SoftwareSerial
+  printer.begin(); 
+        printer.justify('C');
+            printer.printBitmap(adalogo_width, adalogo_height, adalogo_data);
+            printer.feed(2);
+            printer.justify('C');
+            printer.setSize('M');
+            printer.println(F("Your Good Deed"));
+            printer.println(F("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"));
+            printer.println(F("Pick a piece of trash"));
+            printer.println(F("up from the ground today!"));
+            printer.println(F("Love your mother"));
+            printer.println(F("There is no Planet B"));
+            printer.println(F("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"));
+            printer.feed(10);
+            
+      }
+    }
+    if(b2 == 1) {           // if b is pressed, continue and print question "Going to a Drive-Thru?" (Introvert 2)
+      if(run == 6 ) {
+        lcd.clear();
+        question();
+        lcd.print("Going to a drive");
+        lcd.setCursor(0,1);
+        lcd.print("thru(L) or no(R)?");
+        run = 9;
+      }
+    }
+     if(b1 == 1) {
+      if(run == 9) { // if a is pressed, continue and print answer "Start a Pay-It-Forward Chain" (Introvert 2a)
+        lcd.clear();
+        question();
+        lcd.print("Thanks! Take");
+        lcd.setCursor(0,1);
+        lcd.print("your slip below.");
+        mySerial.begin(19200);  // Initialize SoftwareSerial
+  printer.begin(); 
+        printer.justify('C');
+            printer.printBitmap(adalogo_width, adalogo_height, adalogo_data);
+            printer.feed(2);
+            printer.justify('C');
+            printer.setSize('M');
+            printer.println(F("Your Good Deed"));
+            printer.println(F("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"));
+            printer.println(F("Start a pay-it-forward"));
+            printer.println(F("chain and pay for the"));
+            printer.println(F("person behind you!"));
+            printer.println(F("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"));
+            printer.feed(10);
+            
+      }
+    }
+     if(b2 == 1) {
+      if(run == 9) { // if a is pressed, continue and print answer "Let Someone Know How Much They Mean to You" (Introvert 2b)
+        lcd.clear();
+        question();
+        lcd.print("Thanks! Take");
+        lcd.setCursor(0,1);
+        lcd.print("your slip below.");
+        mySerial.begin(19200);  // Initialize SoftwareSerial
+  printer.begin(); 
+        printer.justify('C');
+            printer.printBitmap(adalogo_width, adalogo_height, adalogo_data);
+            printer.feed(2);
+            printer.justify('C');
+            printer.setSize('M');
+            printer.println(F("Your Good Deed"));
+            printer.println(F("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"));
+            printer.println(F("Let someone know"));
+            printer.println(F("how much they mean"));
+            printer.println(F("to you!"));
+            printer.println(F("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"));
+            printer.feed(10);
+            
+      }
+    }
+}
+
